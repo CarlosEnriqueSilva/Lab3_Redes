@@ -60,7 +60,7 @@ class Client:
                             #if not data:
                              #   break
                             
-                            if data.decode() == 'EOF':
+                            if data.decode() == 'EOF' or not data:
                                 print(file_name,'Descargado exitosamente. \n')
                                 self.s.send('OK'.encode())
                                 break
