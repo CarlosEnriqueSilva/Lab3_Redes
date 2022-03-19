@@ -18,8 +18,8 @@ class Server:
         self.accept_connections()
     
     def accept_connections(self):
-        #ip = socket.gethostbyname(socket.gethostname())
-        ip = '0.0.0.0'
+        ip = socket.gethostbyname(socket.gethostname())
+        #ip = '0.0.0.0'
         port = int(input('Ingresar puerto para el servidor --> '))
 
         self.s.bind((ip,port))
@@ -71,13 +71,13 @@ class Server:
                 logging.info('Inicio de envio de archivos')
                 logging.info('Nombre archivo: ' + arch)
                 logging.info('Tamaño del archivo: ' + str(b) + " Bytes")
-                logging.info('Cantidad de clientes: ' + numClientes)
+                logging.info('Cantidad de clientes: ' + str(numClientes))
                 
                 
     def handle_client(self,c,addr,data,num,numClientes):
         #data = c.recv(1024).decode()
         logging.info('Cliente ' + str(addr[1]))
-        iniciar = c.recv(1024).decode()
+        iniciar = c.recv(50000).decode()
         if iniciar == 'Listo':
             if not os.path.exists(data):
                 c.send("El Archivo no existe".encode())
@@ -87,7 +87,7 @@ class Server:
                 nombree = 'Cliente-' + str(num) + '-Prueba-' + str(numClientes) + '.txt'
                 c.send(nombree.encode())
                 
-                if c.recv(1024).decode() == 'Nombre recibido correctamente':
+                if c.recv(50000).decode() == 'Nombre recibido correctamente':
                     print('Enviando: ',data)
                     
                     file = open(data,'rb')
@@ -101,14 +101,14 @@ class Server:
                    # print('Data: ', data)
                     if data != '':
                         
-                        data = file.read(1024)
+                        data = file.read(50000)
                         while data:
                     #        print('Dat:',data)
                             c.send(data)
-                            data = file.read(1024)   
+                            data = file.read(50000)   
                         c.send("EOF".encode())
                         
-                    confirm = c.recv(1024).decode()
+                    confirm = c.recv(50000).decode()
                     if confirm == 'OK':
                         logging.info('Archivo entregado exitosamente a cliente: ' + str(addr[1]))
                         end=time.time()

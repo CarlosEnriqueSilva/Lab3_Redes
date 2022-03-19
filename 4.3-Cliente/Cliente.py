@@ -7,6 +7,7 @@ Created on Tue Mar 15 18:37:08 2022
 import socket
 import os
 import hashlib
+import time
 
 class Client:
     def __init__(self):
@@ -34,7 +35,7 @@ class Client:
             confirm = input("Si esta listo para recibir escriba 'Listo'. Si desea cancelar el envio escriba No ")
             self.s.send(confirm.encode())
             
-            confirmation = self.s.recv(1024)
+            confirmation = self.s.recv(50000)
             if confirmation.decode() == "El Archivo no existe":
                 print("Error de envío de archivo desde el servidor.")
 
@@ -43,7 +44,8 @@ class Client:
                 self.reconnect()
 
             else:
-                file_name = self.s.recv(1024).decode()
+                start = time.time()
+                file_name = self.s.recv(50000).decode()
                 write_name = 'ArchivosRecibidos/'+file_name
                 
                 if write_name.endswith('.txt'):
@@ -53,7 +55,7 @@ class Client:
     
                     with open(write_name,'wb') as file:
                         while 1:
-                            data = self.s.recv(1024)
+                            data = self.s.recv(50000)
                            # print(data.decode())
                             #if not data:
                              #   break
@@ -63,8 +65,13 @@ class Client:
                                 self.s.send('OK'.encode())
                                 break
                             file.write(data)
-                            
-                    hashVal = self.s.recv(1024).decode()
+                    end = time.time()
+                    b = os.path.getsize(write_name)
+                    print('Bytes recibidos:',str(b))
+                    
+                    print('Tiempo en cliente:', str(end-start))
+                    
+                    hashVal = self.s.recv(50000).decode()
                     print('Valor hash del archivo recibido:', hashVal, '\n')
                     
                     file = open(write_name,'rb')
