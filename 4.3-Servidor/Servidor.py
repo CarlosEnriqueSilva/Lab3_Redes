@@ -86,36 +86,38 @@ class Server:
                 c.send("iniciando-envio".encode())
                 nombree = 'Cliente-' + str(num) + '-Prueba-' + str(numClientes) + '.txt'
                 c.send(nombree.encode())
-                print('Enviando: ',data)
                 
-                file = open(data,'rb')
-                contenido = file.read().decode().strip()
-                #print('Contenido:', contenido)
-                hashVal = str(hashlib.sha256(contenido.encode()).hexdigest())
-                #print('Hash: ', hashVal)
-                file = open(data,'rb')
-    
-                start = time.time()
-               # print('Data: ', data)
-                if data != '':
+                if c.recv(1024).decode() == 'Nombre recibido correctamente':
+                    print('Enviando: ',data)
                     
-                    data = file.read(1024)
-                    while data:
-                #        print('Dat:',data)
-                        c.send(data)
-                        data = file.read(1024)   
-                    c.send("EOF".encode())
-                    
-                confirm = c.recv(1024).decode()
-                if confirm == 'OK':
-                    logging.info('Archivo entregado exitosamente a cliente: ' + str(addr[1]))
-                    end=time.time()
-                    logging.info('Tiempo de entrega: ' + str(end-start))
-                    c.send(hashVal.encode())
-                    
-    
-                    c.shutdown(socket.SHUT_RDWR)
-                    c.close()
+                    file = open(data,'rb')
+                    contenido = file.read().decode().strip()
+                    #print('Contenido:', contenido)
+                    hashVal = str(hashlib.sha256(contenido.encode()).hexdigest())
+                    #print('Hash: ', hashVal)
+                    file = open(data,'rb')
+        
+                    start = time.time()
+                   # print('Data: ', data)
+                    if data != '':
+                        
+                        data = file.read(1024)
+                        while data:
+                    #        print('Dat:',data)
+                            c.send(data)
+                            data = file.read(1024)   
+                        c.send("EOF".encode())
+                        
+                    confirm = c.recv(1024).decode()
+                    if confirm == 'OK':
+                        logging.info('Archivo entregado exitosamente a cliente: ' + str(addr[1]))
+                        end=time.time()
+                        logging.info('Tiempo de entrega: ' + str(end-start))
+                        c.send(hashVal.encode())
+                        
+        
+                        c.shutdown(socket.SHUT_RDWR)
+                        c.close()
                     
             
 

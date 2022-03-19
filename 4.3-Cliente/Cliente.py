@@ -45,43 +45,47 @@ class Client:
             else:
                 file_name = self.s.recv(1024).decode()
                 write_name = 'ArchivosRecibidos/'+file_name
-                if os.path.exists(write_name): os.remove(write_name)
-
-                with open(write_name,'wb') as file:
-                    while 1:
-                        data = self.s.recv(1024)
-                       # print(data.decode())
-                        #if not data:
-                         #   break
-                        
-                        if data.decode() == 'EOF':
-                            print(file_name,'Descargado exitosamente. \n')
-                            self.s.send('OK'.encode())
-                            break
-                        file.write(data)
-                        
-                hashVal = self.s.recv(1024).decode()
-                print('Valor hash del archivo recibido:', hashVal, '\n')
                 
-                file = open(write_name,'rb')
-                contenido = file.read().decode().strip()
-               # print('Contenido: ', contenido)
-                calcHash = str(hashlib.sha256(contenido.encode()).hexdigest())
-                file = open(write_name,'rb')
-                #print(file.read())
-                print('Valor hash del archivo calculado:', calcHash, '\n')
-                
-                if hashVal.strip() == calcHash.strip():
-                    print('Hash Calculado y hash recibido son iguales')
-                else:
-                    print("Error en la integridad de los datos")
+                if write_name.endswith('.txt'):
+                    self.s.send('Nombre recibido correctamente')
+                               
+                    if os.path.exists(write_name): os.remove(write_name)
+    
+                    with open(write_name,'wb') as file:
+                        while 1:
+                            data = self.s.recv(1024)
+                           # print(data.decode())
+                            #if not data:
+                             #   break
+                            
+                            if data.decode() == 'EOF':
+                                print(file_name,'Descargado exitosamente. \n')
+                                self.s.send('OK'.encode())
+                                break
+                            file.write(data)
+                            
+                    hashVal = self.s.recv(1024).decode()
+                    print('Valor hash del archivo recibido:', hashVal, '\n')
                     
-                
-                print('')
-                print(file_name,'successfully downloaded.')
-
+                    file = open(write_name,'rb')
+                    contenido = file.read().decode().strip()
+                   # print('Contenido: ', contenido)
+                    calcHash = str(hashlib.sha256(contenido.encode()).hexdigest())
+                    file = open(write_name,'rb')
+                    #print(file.read())
+                    print('Valor hash del archivo calculado:', calcHash, '\n')
+                    
+                    if hashVal.strip() == calcHash.strip():
+                        print('Hash Calculado y hash recibido son iguales')
+                    else:
+                        print("Error en la integridad de los datos")
+                        
+                    
+                    print('')
+                    print(file_name,'successfully downloaded.')
+    
                 self.s.shutdown(socket.SHUT_RDWR)
                 self.s.close()
                 self.reconnect()
-                
+                    
 client = Client()
