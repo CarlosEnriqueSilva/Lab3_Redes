@@ -38,7 +38,7 @@ class Server:
         logging.basicConfig(filename=logName, level=logging.INFO)
         logging.info('Inicio de envio de archivos')
         logging.info('Nombre archivo: ' + arch)
-        logging.info('Tamaño del archivo: ' + str(b))
+        logging.info('Tamaño del archivo: ' + str(b) + " bytes")
         logging.info('Cantidad de clientes: ' + str(numClientes))
         
         threads = list()
@@ -70,7 +70,7 @@ class Server:
                 b = os.path.getsize(arch)
                 logging.info('Inicio de envio de archivos')
                 logging.info('Nombre archivo: ' + arch)
-                logging.info('Tamaño del archivo: ' + str(b))
+                logging.info('Tamaño del archivo: ' + str(b) + " bytes")
                 logging.info('Cantidad de clientes: ' + numClientes)
                 
                 

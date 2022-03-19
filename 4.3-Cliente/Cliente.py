@@ -47,7 +47,7 @@ class Client:
                 write_name = 'ArchivosRecibidos/'+file_name
                 
                 if write_name.endswith('.txt'):
-                    self.s.send('Nombre recibido correctamente')
+                    self.s.send('Nombre recibido correctamente'.encode())
                                
                     if os.path.exists(write_name): os.remove(write_name)
     
