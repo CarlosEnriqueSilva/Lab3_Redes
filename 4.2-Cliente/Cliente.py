@@ -40,25 +40,31 @@ class Client:
 
             else:
                 file_name = self.s.recv(1024).decode()
-                write_name = 'DescServ '+file_name
-                if os.path.exists(write_name): os.remove(write_name)
-
-                with open(write_name,'wb') as file:
-                    while 1:
-                        data = self.s.recv(1024)
-                        
-                        #if not data:
-                         #   break
-                        
-                        if data.decode() == 'EOF':
-                            print(file_name,'Descargado exitosamente.')
-                            self.s.send('OK'.encode())
-                            break
-
-                        file.write(data)
-                hashVal = self.s.recv(1024).decode()
-                print('Valor hash del archivo:', hashVal)
-                print(file_name,'successfully downloaded.')
+                
+                if not file_name.endswith('.txt'):
+                    self.s.send('Error Al recibir el nombre'.encode())
+                    
+                else:
+                    self.s.send('Nombre recibido correctamente'.encode())
+                    write_name = 'DescServ '+file_name
+                    if os.path.exists(write_name): os.remove(write_name)
+    
+                    with open(write_name,'wb') as file:
+                        while 1:
+                            data = self.s.recv(1024)
+                            
+                            #if not data:
+                             #   break
+                            
+                            if data.decode() == 'EOF':
+                                print(file_name,'Descargado exitosamente.')
+                                self.s.send('OK'.encode())
+                                break
+    
+                            file.write(data)
+                    hashVal = self.s.recv(1024).decode()
+                    print('Valor hash del archivo:', hashVal)
+                    print(file_name,'successfully downloaded.')
 
                 self.s.shutdown(socket.SHUT_RDWR)
                 self.s.close()

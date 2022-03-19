@@ -34,6 +34,7 @@ class Server:
         now = datetime.datetime.now()
         logName = 'Logs/'+ str(now.year) + '-' + str(now.month) + '-' + str(now.day)+ '-' + str(now.hour)+ '-' +  str(now.minute)+ '-' + str(now.second) + 'prueba' + str(p) + '-log.log'
         b = os.path.getsize(arch)
+        
         logging.basicConfig(filename=logName, level=logging.INFO)
         logging.info('Inicio de envio de archivos')
         logging.info('Nombre archivo: ' + arch)
@@ -69,7 +70,7 @@ class Server:
                 b = os.path.getsize(arch)
                 logging.info('Inicio de envio de archivos')
                 logging.info('Nombre archivo: ' + arch)
-                logging.info('Tamaño del archivo: ' + b)
+                logging.info('Tamaño del archivo: ' + str(b))
                 logging.info('Cantidad de clientes: ' + numClientes)
                 
                 
@@ -83,31 +84,33 @@ class Server:
             c.send("iniciando-envio".encode())
             nom = str(addr[1]) + data
             c.send(nom.encode())
-            print('Enviando: ',data)
             
-            file = open(data,'rb')
-            hashVal = str(hash(file))
-            
-            start = time.time()
-            
-            if data != '':
+            if c.recv(1024).decode() == 'Nombre recibido correctamente':
+                print('Enviando: ',data)
                 
-                data = file.read(1024)
-                while data:
-                    c.send(data)
-                    data = file.read(1024)   
-                c.send("EOF".encode())
+                file = open(data,'rb')
+                hashVal = str(hash(file))
                 
-            confirm = c.recv(1024).decode()
-            if confirm == 'OK':
-                logging.info('Archivo entregado exitosamente a cliente: ' + str(addr[1]))
-                end=time.time()
-                logging.info('Tiempo de entrega: ' + str(end-start))
-                c.send(hashVal.encode())
+                start = time.time()
                 
-
-                c.shutdown(socket.SHUT_RDWR)
-                c.close()
+                if data != '':
+                    
+                    data = file.read(1024)
+                    while data:
+                        c.send(data)
+                        data = file.read(1024)   
+                    c.send("EOF".encode())
+                    
+                confirm = c.recv(1024).decode()
+                if confirm == 'OK':
+                    logging.info('Archivo entregado exitosamente a cliente: ' + str(addr[1]))
+                    end=time.time()
+                    logging.info('Tiempo de entrega: ' + str(end-start))
+                    c.send(hashVal.encode())
+                    
+    
+                    c.shutdown(socket.SHUT_RDWR)
+                    c.close()
                 
         
 
