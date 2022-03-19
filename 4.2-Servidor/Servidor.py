@@ -80,7 +80,8 @@ class Server:
 
         else:
             c.send("iniciando-envio".encode())
-            c.send(data.encode())
+            nom = str(addr[1]) + data
+            c.send(nom.encode())
             print('Enviando: ',data)
             
             file = open(data,'rb')

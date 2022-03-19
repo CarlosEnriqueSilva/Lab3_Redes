@@ -1,7 +1,0 @@
-INFO:root:Inicio de envio de archivos
-INFO:root:Nombre archivo: 250MB.txt
-INFO:root:Tamaño del archivo: 262144000
-INFO:root:Cantidad de clientes: 1
-INFO:root:Cliente 53934
-INFO:root:Archivo entregado exitosamente a cliente: 53934
-INFO:root:Tiempo de entrega: -1.6709940433502197
