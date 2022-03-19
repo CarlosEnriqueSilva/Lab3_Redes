@@ -18,7 +18,7 @@ class Server:
     
     def accept_connections(self):
         #ip = socket.gethostbyname(socket.gethostname())
-        ip = '127.0.1.1'
+        ip = '0.0.0.0'
         port = int(input('Ingresar puerto para el servidor --> '))
 
         self.s.bind((ip,port))
