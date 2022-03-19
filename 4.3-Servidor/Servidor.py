@@ -10,6 +10,7 @@ import os
 import logging
 import datetime
 import time
+import hashlib
 
 class Server:
     def __init__(self):
@@ -18,7 +19,7 @@ class Server:
     
     def accept_connections(self):
         #ip = socket.gethostbyname(socket.gethostname())
-        ip = '127.0.0.1'
+        ip = '0.0.0.0'
         port = int(input('Ingresar puerto para el servidor --> '))
 
         self.s.bind((ip,port))
@@ -50,7 +51,7 @@ class Server:
             #print('C:',c,'addr:', addr)
             #print(addr[1])
             
-            threads.append(threading.Thread(target=self.handle_client,args=(c,addr,arch,)))
+            threads.append(threading.Thread(target=self.handle_client,args=(c,addr,arch,conectClient +1,numClientes,)))
             conectClient += 1
             
             if conectClient == numClientes:
@@ -69,45 +70,53 @@ class Server:
                 b = os.path.getsize(arch)
                 logging.info('Inicio de envio de archivos')
                 logging.info('Nombre archivo: ' + arch)
-                logging.info('Tamaño del archivo: ' + b)
+                logging.info('Tamaño del archivo: ' + str(b))
                 logging.info('Cantidad de clientes: ' + numClientes)
                 
                 
-    def handle_client(self,c,addr,data):
+    def handle_client(self,c,addr,data,num,numClientes):
         #data = c.recv(1024).decode()
         logging.info('Cliente ' + str(addr[1]))
-        if not os.path.exists(data):
-            c.send("El Archivo no existe".encode())
-
-        else:
-            c.send("iniciando-envio".encode())
-            c.send(data.encode())
-            print('Enviando: ',data)
+        iniciar = c.recv(1024).decode()
+        if iniciar == 'Listo':
+            if not os.path.exists(data):
+                c.send("El Archivo no existe".encode())
+    
+            else:
+                c.send("iniciando-envio".encode())
+                nombree = 'Cliente-' + str(num) + '-Prueba-' + str(numClientes) + '.txt'
+                c.send(nombree.encode())
+                print('Enviando: ',data)
+                
+                file = open(data,'rb')
+                contenido = file.read().decode().strip()
+                #print('Contenido:', contenido)
+                hashVal = str(hashlib.sha256(contenido.encode()).hexdigest())
+                #print('Hash: ', hashVal)
+                file = open(data,'rb')
+    
+                start = time.time()
+               # print('Data: ', data)
+                if data != '':
+                    
+                    data = file.read(1024)
+                    while data:
+                #        print('Dat:',data)
+                        c.send(data)
+                        data = file.read(1024)   
+                    c.send("EOF".encode())
+                    
+                confirm = c.recv(1024).decode()
+                if confirm == 'OK':
+                    logging.info('Archivo entregado exitosamente a cliente: ' + str(addr[1]))
+                    end=time.time()
+                    logging.info('Tiempo de entrega: ' + str(end-start))
+                    c.send(hashVal.encode())
+                    
+    
+                    c.shutdown(socket.SHUT_RDWR)
+                    c.close()
+                    
             
-            file = open(data,'rb')
-            hashVal = str(hash(file))
-            
-            start = time.time()
-            
-            if data != '':
-                
-                data = file.read(1024)
-                while data:
-                    c.send(data)
-                    data = file.read(1024)   
-                c.send("EOF".encode())
-                
-            confirm = c.recv(1024).decode()
-            if confirm == 'OK':
-                logging.info('Archivo entregado exitosamente a cliente: ' + str(addr[1]))
-                end=time.time()
-                logging.info('Tiempo de entrega: ' + str(end-start))
-                c.send(hashVal.encode())
-                
-
-                c.shutdown(socket.SHUT_RDWR)
-                c.close()
-                
-        
 
 server = Server()

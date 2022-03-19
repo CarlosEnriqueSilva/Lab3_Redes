@@ -1,0 +1,7 @@
+INFO:root:Inicio de envio de archivos
+INFO:root:Nombre archivo: PruebaLiviano.txt
+INFO:root:Tamaño del archivo: 29
+INFO:root:Cantidad de clientes: 1
+INFO:root:Cliente 58333
+INFO:root:Archivo entregado exitosamente a cliente: 58333
+INFO:root:Tiempo de entrega: 0.0018978118896484375
