@@ -18,8 +18,8 @@ class Server:
         self.accept_connections()
     
     def accept_connections(self):
-        #ip = socket.gethostbyname(socket.gethostname())
-        ip = '0.0.0.0'
+        ip = socket.gethostbyname(socket.gethostname())
+        #ip = '0.0.0.0'
         port = int(input('Ingresar puerto para el servidor --> '))
 
         self.s.bind((ip,port))
@@ -76,7 +76,7 @@ class Server:
                 
     def handle_client(self,c,addr,data,num,numClientes):
         #data = c.recv(1024).decode()
-        logging.info('Cliente ' + str(addr[1]))
+        logging.info('Cliente addr: ' + str(addr) + ' c: ' + str(c))
         iniciar = c.recv(50000).decode()
         if iniciar == 'Listo':
             if not os.path.exists(data):
