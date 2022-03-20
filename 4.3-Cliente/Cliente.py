@@ -32,7 +32,8 @@ class Client:
             #file_name = input('Enter file name on server --> ')
             #self.s.send(file_name.encode())
             
-            confirm = input("Si esta listo para recibir escriba 'Listo'. Si desea cancelar el envio escriba No ")
+            #confirm = input("Si esta listo para recibir escriba 'Listo'. Si desea cancelar el envio escriba No ")
+            confirm = 'Listo'
             self.s.send(confirm.encode())
             
             confirmation = self.s.recv(50000)
@@ -60,7 +61,7 @@ class Client:
                             #if not data:
                              #   break
                             
-                            if data.decode() == 'EOF' or not data:
+                            if data.decode() == 'EOF' or not data or data.decode().endswith('EOF') or 'EOF' in data.decode():
                                 print(file_name,'Descargado exitosamente. \n')
                                 self.s.send('OK'.encode())
                                 break
