@@ -56,8 +56,17 @@ class Client:
                             #if not data:
                              #   break
                             
-                            if data.decode() == 'EOF':
-                                print(file_name,'Descargado exitosamente.')
+                            if data.decode() == 'EOF' or not data:
+                                print(file_name,'Descargado exitosamente. \n')
+                                self.s.send('OK'.encode())
+                                break
+                            
+                            if data.decode().endswith('EOF') or 'EOF' in data.decode():
+                                w = data.decode()
+                                w = w.replace('EOF','')
+                                w = w.encode()
+                                file.write(w)
+                                print(file_name,'Descargado exitosamente. \n')
                                 self.s.send('OK'.encode())
                                 break
     
